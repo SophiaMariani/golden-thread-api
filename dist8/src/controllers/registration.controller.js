@@ -14,16 +14,20 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // import {inject} from @loopback/context;
-const rest_1 = require("@loopback/rest");
 const repository_1 = require("@loopback/repository");
 const user_repository_1 = require("../repositories/user.repository");
 const user_1 = require("../models/user");
+const rest_1 = require("@loopback/rest");
 let RegistrationController = class RegistrationController {
     constructor(userRepo) {
         this.userRepo = userRepo;
     }
-    async creatingRegistration(users) {
-        return await this.userRepo.create(users);
+    async creatingRegistration(user) {
+        // Check that required fields are supplied
+        if (!user.email || !user.password) {
+            throw new rest_1.HttpErrors.BadRequest('missing data');
+        }
+        return await this.userRepo.create(user);
     }
 };
 __decorate([
@@ -34,7 +38,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RegistrationController.prototype, "creatingRegistration", null);
 RegistrationController = __decorate([
-    __param(0, repository_1.repository(user_repository_1.UserRepository.name)),
+    __param(0, repository_1.repository(user_repository_1.UserRepository)),
     __metadata("design:paramtypes", [user_repository_1.UserRepository])
 ], RegistrationController);
 exports.RegistrationController = RegistrationController;
